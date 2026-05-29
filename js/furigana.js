@@ -60,8 +60,29 @@ function processNode(root) {
   nodes.forEach(annotate);
 }
 
+function getSubtitleText(container) {
+  const clone = container.cloneNode(true);
+  clone.querySelectorAll('rt').forEach(rt => rt.remove());
+  return clone.textContent.trim();
+}
+
 function attachToContainer(container) {
   subtitleContainer = container;
+
+  document.addEventListener('click', e => {
+    const text = getSubtitleText(container);
+    if (!text) return;
+    const hit = document.elementsFromPoint(e.clientX, e.clientY)
+      .some(el => container.contains(el) && el !== container);
+    if (!hit) return;
+    const video = document.querySelector('video');
+    const wasPaused = video && video.paused;
+    browser.runtime.sendMessage({ type: 'OPEN_JISHO', query: text });
+    if (wasPaused) {
+      // Netflix fires play() asynchronously after the click — intercept it once
+      video.addEventListener('play', e => { e.target.pause(); }, { once: true, capture: true });
+    }
+  }, true);
 
   const observer = new MutationObserver(mutations => {
     observer.disconnect();
