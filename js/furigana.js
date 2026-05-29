@@ -84,6 +84,18 @@ function attachToContainer(container) {
     }
   }, true);
 
+  document.addEventListener('keydown', e => {
+    if (e.code !== 'KeyJ' || e.altKey || e.ctrlKey || e.metaKey) return;
+    const tag = document.activeElement && document.activeElement.tagName;
+    if (tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable)) return;
+    const text = getSubtitleText(container);
+    if (!text) return;
+    const video = document.querySelector('video');
+    if (video) video.pause();
+    browser.runtime.sendMessage({ type: 'OPEN_JISHO', query: text });
+    e.preventDefault();
+  }, true);
+
   const observer = new MutationObserver(mutations => {
     observer.disconnect();
     for (const m of mutations) {

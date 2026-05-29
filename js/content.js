@@ -22,6 +22,15 @@ function frameStep(video, deltaSeconds) {
   seekVideo(video, deltaSeconds);
 }
 
+function injectPageScript() {
+  const s = document.createElement('script');
+  s.src = browser.runtime.getURL('js/page-script.js');
+  (document.head || document.documentElement).appendChild(s);
+  s.remove();
+}
+
+if (onNetflix) injectPageScript();
+
 // Registered immediately (document_start) so we're first in the capture chain.
 document.addEventListener('keydown', e => {
   const tag = document.activeElement && document.activeElement.tagName;
@@ -49,6 +58,14 @@ document.addEventListener('keydown', e => {
       applySpeed(1.0);
       e.preventDefault();
     }
+    return;
+  }
+
+  // t  →  toggle Japanese ↔ English subtitles (Netflix only)
+  if (e.code === 'KeyT') {
+    if (!onNetflix) return;
+    document.dispatchEvent(new CustomEvent('NJ_TOGGLE_SUBTITLE'));
+    e.preventDefault();
     return;
   }
 

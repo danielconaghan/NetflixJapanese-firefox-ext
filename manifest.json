@@ -37,6 +37,7 @@
     }
   },
   "web_accessible_resources": [
+    "js/page-script.js",
     "dict/base.dat.gz",
     "dict/check.dat.gz",
     "dict/tid.dat.gz",
