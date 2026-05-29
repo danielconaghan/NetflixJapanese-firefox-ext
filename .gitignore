@@ -1,0 +1,24 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Firefox extension build artifacts
+*.xpi
+*.zip
+web-ext-artifacts/
+
+# Node.js (if using web-ext or build tools)
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Editor directories
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Environment files
+.env
+.env.local

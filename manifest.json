@@ -1,0 +1,62 @@
+{
+  "name": "Netflix Japanese",
+  "short_name": "NetflixJP",
+  "version": "1.1",
+  "description": "Japanese language learning tools for Netflix. Furigana on subtitles, fine-grained speed control, and keyboard shortcuts.",
+  "manifest_version": 2,
+  "permissions": [
+    "storage",
+    "tabs",
+    "*://*.netflix.com/*"
+  ],
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.svg",
+    "default_title": "Netflix Japanese"
+  },
+  "background": {
+    "scripts": ["js/background.js"],
+    "persistent": false
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://*.netflix.com/*"],
+      "js": ["js/content.js"],
+      "run_at": "document_start"
+    },
+    {
+      "matches": ["*://*.netflix.com/*"],
+      "js": ["js/dict_loader.js", "js/kuromoji.js", "js/furigana.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "commands": {
+    "speed-reset": {
+      "suggested_key": { "default": "Alt+0" },
+      "description": "Reset speed to 1.0x"
+    }
+  },
+  "web_accessible_resources": [
+    "dict/base.dat.gz",
+    "dict/check.dat.gz",
+    "dict/tid.dat.gz",
+    "dict/tid_map.dat.gz",
+    "dict/tid_pos.dat.gz",
+    "dict/cc.dat.gz",
+    "dict/unk.dat.gz",
+    "dict/unk_char.dat.gz",
+    "dict/unk_compat.dat.gz",
+    "dict/unk_invoke.dat.gz",
+    "dict/unk_map.dat.gz",
+    "dict/unk_pos.dat.gz"
+  ],
+  "icons": {
+    "128": "icon.svg"
+  },
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "netflix-japanese@daniel.local",
+      "strict_min_version": "109.0"
+    }
+  }
+}

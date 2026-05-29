@@ -1,0 +1,166 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 260px;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 12px;
+  padding: 10px;
+  user-select: none;
+}
+
+/* Header */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #2e2e4e;
+}
+
+.title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #a78bfa;
+  letter-spacing: 0.5px;
+}
+
+.version {
+  font-size: 10px;
+  font-weight: 400;
+  color: #666;
+  letter-spacing: 0;
+}
+
+.current-speed {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  min-width: 52px;
+  text-align: right;
+}
+
+/* Section labels */
+.section-label {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: #888;
+  margin: 8px 0 5px;
+}
+
+/* Button grids */
+.btn-grid {
+  display: grid;
+  gap: 4px;
+}
+
+.slow-grid {
+  grid-template-columns: repeat(7, 1fr);
+}
+
+.fast-grid {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.btn-grid button {
+  background: #2a2a4a;
+  color: #c4c4e0;
+  border: 1px solid #3a3a5a;
+  border-radius: 5px;
+  padding: 5px 2px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s, border-color 0.1s;
+  font-variant-numeric: tabular-nums;
+}
+
+.btn-grid button:hover {
+  background: #3d3d6b;
+  color: #fff;
+  border-color: #6c63ff;
+}
+
+.btn-grid button.active {
+  background: #6c63ff;
+  color: #fff;
+  border-color: #8b85ff;
+  font-weight: 700;
+}
+
+.fast-grid button {
+  background: #1e2a3a;
+  color: #90b8d8;
+  border-color: #2a3a4a;
+}
+
+.fast-grid button:hover {
+  background: #2a3d5a;
+  color: #fff;
+  border-color: #4a90d9;
+}
+
+.fast-grid button.active {
+  background: #1a6fa8;
+  color: #fff;
+  border-color: #4a90d9;
+  font-weight: 700;
+}
+
+/* Nudge row */
+.nudge-row {
+  display: flex;
+  gap: 4px;
+  margin-top: 8px;
+  align-items: center;
+}
+
+.nudge-btn {
+  flex: 1;
+  background: #252540;
+  color: #a0a0c0;
+  border: 1px solid #3a3a5a;
+  border-radius: 5px;
+  padding: 5px 4px;
+  font-size: 11px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.nudge-btn:hover {
+  background: #3a3a6a;
+  color: #fff;
+}
+
+.reset-btn {
+  flex: 1.2;
+  background: #2a1a3a;
+  color: #c084fc;
+  border: 1px solid #4a2a6a;
+  border-radius: 5px;
+  padding: 5px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.reset-btn:hover {
+  background: #4a2a6a;
+  color: #fff;
+}
+
+/* Keyboard hint */
+.shortcuts-hint {
+  margin-top: 7px;
+  text-align: center;
+  color: #555;
+  font-size: 10px;
+}
