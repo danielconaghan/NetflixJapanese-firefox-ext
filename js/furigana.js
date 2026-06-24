@@ -7,6 +7,7 @@ const DICT_PATH = browser.runtime.getURL('dict/');
 
 let tokenizer = null;
 let subtitleContainer = null;
+let subtitleObserver = null;
 
 // Katakana → hiragana (kuromoji returns readings in katakana)
 function toHiragana(str) {
@@ -66,49 +67,61 @@ function getSubtitleText(container) {
   return clone.textContent.trim();
 }
 
-function attachToContainer(container) {
-  subtitleContainer = container;
+// Click and keydown listeners reference subtitleContainer dynamically,
+// so they only need to be attached once even when the container changes.
+let listenersAttached = false;
+function attachDocumentListeners() {
+  if (listenersAttached) return;
+  listenersAttached = true;
 
   document.addEventListener('click', e => {
-    const text = getSubtitleText(container);
+    if (!subtitleContainer) return;
+    const text = getSubtitleText(subtitleContainer);
     if (!text) return;
     const hit = document.elementsFromPoint(e.clientX, e.clientY)
-      .some(el => container.contains(el) && el !== container);
+      .some(el => subtitleContainer.contains(el) && el !== subtitleContainer);
     if (!hit) return;
     const video = document.querySelector('video');
     const wasPaused = video && video.paused;
     browser.runtime.sendMessage({ type: 'OPEN_JISHO', query: text });
     if (wasPaused) {
-      // Netflix fires play() asynchronously after the click — intercept it once
       video.addEventListener('play', e => { e.target.pause(); }, { once: true, capture: true });
     }
   }, true);
 
   document.addEventListener('keydown', e => {
     if (e.code !== 'KeyJ' || e.altKey || e.ctrlKey || e.metaKey) return;
+    if (!subtitleContainer) return;
     const tag = document.activeElement && document.activeElement.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA' || (document.activeElement && document.activeElement.isContentEditable)) return;
-    const text = getSubtitleText(container);
+    const text = getSubtitleText(subtitleContainer);
     if (!text) return;
     const video = document.querySelector('video');
     if (video) video.pause();
     browser.runtime.sendMessage({ type: 'OPEN_JISHO', query: text });
     e.preventDefault();
   }, true);
+}
 
-  const observer = new MutationObserver(mutations => {
-    observer.disconnect();
+function attachToContainer(container) {
+  subtitleContainer = container;
+  attachDocumentListeners();
+
+  if (subtitleObserver) subtitleObserver.disconnect();
+
+  subtitleObserver = new MutationObserver(mutations => {
+    subtitleObserver.disconnect();
     for (const m of mutations) {
       for (const node of m.addedNodes) {
         if (node.nodeType === Node.ELEMENT_NODE) processNode(node);
         else if (node.nodeType === Node.TEXT_NODE) annotate(node);
       }
     }
-    observer.observe(container, { childList: true, subtree: true });
+    subtitleObserver.observe(container, { childList: true, subtree: true });
   });
 
   processNode(container);
-  observer.observe(container, { childList: true, subtree: true });
+  subtitleObserver.observe(container, { childList: true, subtree: true });
 }
 
 // Wait for dict_loader.js to pre-fetch dicts into browser cache before starting kuromoji.
@@ -121,11 +134,12 @@ document.addEventListener('NJDictsReady', function () {
   });
 }, { once: true });
 
-// Watch for player-timedtext to appear
+// Watch for player-timedtext to appear or reappear after SPA navigation.
+// bodyObserver stays connected permanently so it catches the container being
+// recreated when the user navigates between shows without a full page reload.
 const bodyObserver = new MutationObserver(() => {
   const container = document.querySelector('.player-timedtext');
-  if (container) {
-    bodyObserver.disconnect();
+  if (container && container !== subtitleContainer) {
     attachToContainer(container);
   }
 });
@@ -135,6 +149,5 @@ bodyObserver.observe(target, { childList: true, subtree: true });
 
 const existing = document.querySelector('.player-timedtext');
 if (existing) {
-  bodyObserver.disconnect();
   attachToContainer(existing);
 }

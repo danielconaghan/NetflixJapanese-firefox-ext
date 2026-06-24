@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(zip -r netflix-japanese-v1.2.xpi manifest.json popup.html popup.css icon.svg icon.png js/background.js js/content.js js/popup.js js/dict_loader.js js/kuromoji.js js/furigana.js dict/)"
+    ]
+  }
+}
